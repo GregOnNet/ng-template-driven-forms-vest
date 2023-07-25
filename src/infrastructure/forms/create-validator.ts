@@ -1,6 +1,7 @@
 import { AbstractControl, ValidatorFn } from '@angular/forms';
-import { lensProp, set } from 'rambda';
 import { SuiteResult } from 'vest';
+// @gregorwoiwoide: I used lodash, the other one failed
+import { set } from 'lodash';
 
 export function createValidator<
   TFieldName extends string,
@@ -14,9 +15,12 @@ export function createValidator<
     validate: (control: AbstractControl) => {
       const modelCopy: TModel = { ...model };
 
+      console.log(modelCopy, control.value, field);
       // this is a neat way to update foo.bar.baz in an object
       // Update the property with path
-      set(lensProp(field), modelCopy, control.value);
+      // @gregorwoiwode: your set didn't work, causing the delay every time,
+      // it was not properly updating references
+      set(modelCopy, field, control.value); // Update the property with path
 
       // Execute the suite with the model and field
       const result = suite(modelCopy, field);

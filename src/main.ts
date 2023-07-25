@@ -1,11 +1,11 @@
 import { JsonPipe } from '@angular/common';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, inject, OnInit, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { map, tap } from 'rxjs';
-import { create, each, enforce, only, test } from 'vest';
+import { create, enforce, only, test } from 'vest';
 import { provideFormSuite, toDictionary } from './infrastructure';
 import { TodoReadDto } from './todo-read.dto';
 import { TodosFormSectionComponent } from './todos-form-section.component';
@@ -29,16 +29,20 @@ import 'zone.js';
       #form="ngForm"
       [model]="formModel"
       [suite]="formSuite"
-      [ngFormOptions]="{ updateOn: 'blur' }"
     >
-      <todos-form-section [model]="formModel.todos"></todos-form-section>
+      <todos-form-section [todos]="formModel.todos"></todos-form-section>
     </form>
 
     <h2>Form Debug</h2>
-    {{ form.value | json }}
+    <!--- @gregorwoiwode forget the form, use the formmodel -->
+    <pre>
+    {{ formModel | json }}
+    </pre>
   `
 })
-export class App implements OnInit {
+export class App implements OnInit, AfterViewInit {
+  // @gregorwoiwode get access to form to listen to it
+  @ViewChild('form') public form!: NgForm;
   private destroyRef = inject(DestroyRef);
   private http = inject(HttpClient);
 
@@ -59,6 +63,13 @@ export class App implements OnInit {
       .subscribe();
   }
 
+  ngAfterViewInit(): void {
+    // @gregorwoiwode listen here and feed the model immutable
+    this.form.form.valueChanges.subscribe((v) => {
+      this.formModel = {...this.formModel, ...v};
+    })
+  }
+
   private createEmptyFormModel(): TodosFormModel {
     return {
       todos: {}
@@ -68,13 +79,15 @@ export class App implements OnInit {
   private createFormSuite() {
     return create('Todo', (model: TodosFormModel, fieldName: string) => {
       only(fieldName);
-
-      each(Object.values({ ...model.todos }), entry => {
-        test(`todos.${entry.id}.title`, 'Please specify a text.', () => {
+      // @gregorwoiwode: This seems like a better appraoch than vest.each
+      // In other words: this works, the latter doesn't ;-)
+      Object.values(model.todos).forEach((entry, key) => {
+        console.log('sdf');
+        test(`todos.1.title`, 'Please specify a text.', () => {
           console.log('VALIDATING', fieldName, entry.title);
           enforce(entry.title).isNotBlank();
         });
-      });
+      })
     });
   }
 }
