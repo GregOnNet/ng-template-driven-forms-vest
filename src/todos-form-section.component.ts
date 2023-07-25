@@ -1,5 +1,5 @@
-import { KeyValuePipe, NgFor, NgIf } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { KeyValue, KeyValuePipe, NgFor, NgIf } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { connectParentNgForm, provideFormSuite } from './infrastructure';
 import { Dictionary } from './infrastructure/to-dictionary';
@@ -13,7 +13,10 @@ import { TodoReadDto } from './todo-read.dto';
     <ng-container *ngIf="todos">
       <section ngModelGroup="todos" style="display:grid; gap: 1em">
         <!-- @gregorwoiwode You need a track by here to make sure you don't infinite loop -->
-        <div [ngModelGroup]="todo.key" *ngFor="let todo of todos | keyvalue; trackBy: tracker">
+        <div
+          [ngModelGroup]="todo.key"
+          *ngFor="let todo of todos | keyvalue; trackBy: trackById"
+        >
           <form-suite-field>
             <!-- @gregorwoiwode No more banana in the box -->
             <input [ngModel]="todo.value.title" name="title" />
@@ -24,12 +27,10 @@ import { TodoReadDto } from './todo-read.dto';
   `,
   viewProviders: [connectParentNgForm]
 })
-export class TodosFormSectionComponent implements OnInit {
+export class TodosFormSectionComponent {
   @Input() todos?: Dictionary<TodoReadDto>;
 
-  tracker = (i: number) => i;
-
-  constructor() {}
-
-  ngOnInit() {}
+  trackById(_index: number, model: KeyValue<string, TodoReadDto>) {
+    return model.value.id;
+  }
 }
