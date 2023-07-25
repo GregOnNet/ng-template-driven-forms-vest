@@ -10,11 +10,13 @@ import { TodoReadDto } from './todo-read.dto';
   standalone: true,
   imports: [FormsModule, NgFor, NgIf, KeyValuePipe, provideFormSuite()],
   template: `
-    <ng-container *ngIf="model">
+    <ng-container *ngIf="todos">
       <section ngModelGroup="todos" style="display:grid; gap: 1em">
-        <div [ngModelGroup]="todo.key" *ngFor="let todo of model | keyvalue">
+        <!-- @gregorwoiwode You need a track by here to make sure you don't infinite loop -->
+        <div [ngModelGroup]="todo.key" *ngFor="let todo of todos | keyvalue; trackBy: tracker">
           <form-suite-field>
-            <input [(ngModel)]="todo.value.title" name="title" />
+            <!-- @gregorwoiwode No more banana in the box -->
+            <input [ngModel]="todo.value.title" name="title" />
           </form-suite-field>
         </div>
       </section>
@@ -23,7 +25,9 @@ import { TodoReadDto } from './todo-read.dto';
   viewProviders: [connectParentNgForm]
 })
 export class TodosFormSectionComponent implements OnInit {
-  @Input() model?: Dictionary<TodoReadDto>;
+  @Input() todos?: Dictionary<TodoReadDto>;
+
+  tracker = (i: number) => i;
 
   constructor() {}
 
