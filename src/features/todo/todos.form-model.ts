@@ -1,8 +1,8 @@
 import { Dictionary } from "../../infrastructure";
-import { TodoReadDto } from "./todo-read.dto";
+import { ReadTodoDto } from "./dto";
 
 export interface TodosFormModel {
-  todos: Dictionary<TodoReadDto>;
+  todos: Dictionary<ReadTodoDto>;
 }
 
 export function createEmptyFormModel(): TodosFormModel {

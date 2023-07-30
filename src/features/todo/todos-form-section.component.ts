@@ -2,11 +2,11 @@ import { KeyValue, KeyValuePipe, NgFor, NgIf } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import {
-  Dictionary,
   connectParentNgForm,
+  Dictionary,
   provideFormSuite,
 } from "../../infrastructure";
-import { TodoReadDto } from "./todo-read.dto";
+import { ReadTodoDto } from "./dto";
 
 @Component({
   selector: "todos-form-section",
@@ -29,9 +29,9 @@ import { TodoReadDto } from "./todo-read.dto";
   viewProviders: [connectParentNgForm],
 })
 export class TodosFormSectionComponent {
-  @Input() todos?: Dictionary<TodoReadDto>;
+  @Input() todos?: Dictionary<ReadTodoDto>;
 
-  trackById(_index: number, model: KeyValue<string, TodoReadDto>) {
+  trackById(_index: number, model: KeyValue<string, ReadTodoDto>) {
     return model.value.id;
   }
 }
