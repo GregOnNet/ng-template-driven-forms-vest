@@ -1,16 +1,10 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Directive,
-  inject
-} from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import {
   AbstractControl,
   NG_VALIDATORS,
   ValidationErrors,
   Validator
 } from '@angular/forms';
-import { tap } from 'rxjs';
 import { createValidator } from './create-validator';
 import { FormSuiteDirective } from './form-suite.directive';
 import { getControlPath } from './get-control-path';
@@ -27,18 +21,7 @@ import { getControlPath } from './get-control-path';
     }
   ]
 })
-export class FormSuiteModelDirective implements Validator, AfterViewInit {
-  private changeDetector = inject(ChangeDetectorRef);
-
-  ngAfterViewInit(): void {
-    this.formDirective.ngForm.valueChanges
-      ?.pipe(
-        tap(() => console.log('VALUE CHANGE')),
-        tap(() => this.changeDetector.markForCheck())
-      )
-      .subscribe();
-  }
-
+export class FormSuiteModelDirective implements Validator {
   private readonly formDirective = inject(FormSuiteDirective);
 
   public validate(control: AbstractControl): ValidationErrors | null {

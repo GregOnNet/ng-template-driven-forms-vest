@@ -1,4 +1,4 @@
-import { Dictionary } from './infrastructure/to-dictionary';
+import { Dictionary } from '../../infrastructure';
 import { TodoReadDto } from './todo-read.dto';
 
 export interface TodosFormModel {

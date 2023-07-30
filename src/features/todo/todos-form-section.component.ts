@@ -1,12 +1,15 @@
-import { KeyValue, KeyValuePipe, NgFor, NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { connectParentNgForm, provideFormSuite } from './infrastructure';
-import { Dictionary } from './infrastructure/to-dictionary';
-import { TodoReadDto } from './todo-read.dto';
+import { KeyValue, KeyValuePipe, NgFor, NgIf } from "@angular/common";
+import { Component, Input } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import {
+  Dictionary,
+  connectParentNgForm,
+  provideFormSuite,
+} from "../../infrastructure";
+import { TodoReadDto } from "./todo-read.dto";
 
 @Component({
-  selector: 'todos-form-section',
+  selector: "todos-form-section",
   standalone: true,
   imports: [FormsModule, NgFor, NgIf, KeyValuePipe, provideFormSuite()],
   template: `
@@ -17,6 +20,7 @@ import { TodoReadDto } from './todo-read.dto';
           [ngModelGroup]="todo.key"
           *ngFor="let todo of todos | keyvalue; trackBy: trackById"
         >
+          <input type="hidden" [ngModel]="todo.value.id" name="id" />
           <form-suite-field>
             <!-- @gregorwoiwode No more banana in the box -->
             <input [ngModel]="todo.value.title" name="title" />
@@ -25,7 +29,7 @@ import { TodoReadDto } from './todo-read.dto';
       </section>
     </ng-container>
   `,
-  viewProviders: [connectParentNgForm]
+  viewProviders: [connectParentNgForm],
 })
 export class TodosFormSectionComponent {
   @Input() todos?: Dictionary<TodoReadDto>;
