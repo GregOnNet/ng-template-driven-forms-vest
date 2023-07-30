@@ -19,7 +19,6 @@ import { TodoReadDto } from "./todo-read.dto";
           [ngModelGroup]="todo.key"
           *ngFor="let todo of todos | keyvalue; trackBy: trackById"
         >
-          <input type="hidden" [ngModel]="todo.value.id" name="id" />
           <form-suite-field>
             <input [ngModel]="todo.value.title" name="title" />
           </form-suite-field>
