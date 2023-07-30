@@ -13,6 +13,7 @@ import { provideFormSuite, toDictionary } from "../../infrastructure";
 import { TodosFormSectionComponent } from "./todos-form-section.component";
 import { TodosClient } from "./todos.client";
 import { TodosFormModel } from "./todos.form-model";
+import { createTodosFormSuite } from "./create-todos-form.suite";
 
 @Component({
   selector: "todos-form",
@@ -39,7 +40,7 @@ export class TodosForm implements OnInit, AfterViewInit {
   @ViewChild(NgForm) protected ngForm?: NgForm;
 
   protected formModel = this.createEmptyFormModel();
-  protected formSuite = this.createFormSuite();
+  protected formSuite = createTodosFormSuite();
 
   ngOnInit(): void {
     this.client
@@ -68,6 +69,7 @@ export class TodosForm implements OnInit, AfterViewInit {
     this.ngForm?.form.valueChanges
       .pipe(distinctUntilChanged())
       .subscribe((valueChanged) => {
+        console.log("VALUE CHANGED", valueChanged);
         this.formModel = { ...this.formModel, ...valueChanged };
       });
   }
@@ -76,24 +78,5 @@ export class TodosForm implements OnInit, AfterViewInit {
     return {
       todos: {},
     };
-  }
-
-  private createFormSuite() {
-    return create("Todo", (model: TodosFormModel, fieldName: string) => {
-      only(fieldName);
-
-      const todos = Object.values(model.todos).filter((todo) => !!todo.id);
-
-      each(todos, (entry) => {
-        test(
-          `todos.${entry.id}.title`,
-          "Please specify a text.",
-          () => {
-            enforce(entry.title).isNotBlank();
-          },
-          `todos.${entry.id}.title`,
-        );
-      });
-    });
   }
 }
