@@ -1,21 +1,12 @@
 import { JsonPipe } from "@angular/common";
-import {
-  AfterViewInit,
-  Component,
-  OnInit,
-  ViewChild,
-  inject,
-  DestroyRef,
-} from "@angular/core";
-import { FormsModule, NgForm } from "@angular/forms";
-import { distinctUntilChanged, tap } from "rxjs";
+import { Component, inject, OnInit } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { tap } from "rxjs";
 import { provideFormSuite, toDictionary } from "../../infrastructure";
 import { TodosFormSectionComponent } from "./todos-form-section.component";
 import { TodosClient } from "./todos.client";
 import { createEmptyFormModel } from "./todos.form-model";
 import { createTodosFormSuite } from "./create-todos-form.suite";
-import { merge } from "lodash";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "todos-form",
