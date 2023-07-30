@@ -15,14 +15,12 @@ import { TodoReadDto } from "./todo-read.dto";
   template: `
     <ng-container *ngIf="todos">
       <section ngModelGroup="todos" style="display:grid; gap: 1em">
-        <!-- @gregorwoiwode You need a track by here to make sure you don't infinite loop -->
         <div
           [ngModelGroup]="todo.key"
           *ngFor="let todo of todos | keyvalue; trackBy: trackById"
         >
           <input type="hidden" [ngModel]="todo.value.id" name="id" />
           <form-suite-field>
-            <!-- @gregorwoiwode No more banana in the box -->
             <input [ngModel]="todo.value.title" name="title" />
           </form-suite-field>
         </div>

@@ -45,12 +45,6 @@ export class TodosForm implements OnInit, AfterViewInit {
     this.client
       .list()
       .pipe(
-        tap((todos) =>
-          console.log(
-            "As Dictionary",
-            toDictionary(todos, (todo) => todo.id),
-          ),
-        ),
         tap(
           (todos) =>
             (this.formModel.todos = toDictionary(todos, (todo) => todo.id)),
@@ -95,7 +89,6 @@ export class TodosForm implements OnInit, AfterViewInit {
           `todos.${entry.id}.title`,
           "Please specify a text.",
           () => {
-            console.log("VALIDATING", fieldName, entry.title);
             enforce(entry.title).isNotBlank();
           },
           `todos.${entry.id}.title`,
