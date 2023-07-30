@@ -2,7 +2,7 @@ import { JsonPipe } from "@angular/common";
 import { Component, inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { tap } from "rxjs";
-import { provideFormSuite, toDictionary } from "../../infrastructure";
+import { provideFormSuite } from "../../infrastructure";
 import { TodosFormSectionComponent } from "./todos-form-section.component";
 import { TodosClient } from "./todos.client";
 import { createEmptyFormModel } from "./todos.form-model";
@@ -36,12 +36,7 @@ export class TodosForm implements OnInit {
   ngOnInit(): void {
     this.client
       .list()
-      .pipe(
-        tap(
-          (todos) =>
-            (this.formModel.todos = toDictionary(todos, (todo) => todo.id)),
-        ),
-      )
+      .pipe(tap((todos) => (this.formModel.todos = todos)))
       .subscribe();
   }
 }
