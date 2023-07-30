@@ -36,11 +36,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     <pre>{{ formModel | json }}</pre>
   `,
 })
-export class TodosForm implements OnInit, AfterViewInit {
-  private readonly destroyRef = inject(DestroyRef);
+export class TodosForm implements OnInit {
   private readonly client = inject(TodosClient);
-
-  @ViewChild(NgForm) protected ngForm?: NgForm;
 
   protected readonly formModel = createEmptyFormModel();
   protected readonly formSuite = createTodosFormSuite();
@@ -53,27 +50,6 @@ export class TodosForm implements OnInit, AfterViewInit {
           (todos) =>
             (this.formModel.todos = toDictionary(todos, (todo) => todo.id)),
         ),
-      )
-      .subscribe();
-  }
-
-  ngAfterViewInit(): void {
-    this.updateFormModelOnFormValueChanges();
-  }
-
-  /**
-   * Whenever a value changes we update the formModel,
-   * that passes its updated values down dot the form-sections.
-   *
-   * That's why we do not need (ngModelChange) in a form-section, because
-   * it is fed by the parent formModel (unidirectional data-flow).
-   */
-  private updateFormModelOnFormValueChanges() {
-    this.ngForm?.form.valueChanges
-      .pipe(
-        distinctUntilChanged(),
-        tap((valueChanged) => merge(this.formModel, valueChanged)),
-        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
