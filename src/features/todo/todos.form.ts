@@ -5,15 +5,17 @@ import {
   OnInit,
   ViewChild,
   inject,
+  DestroyRef,
 } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { distinctUntilChanged, tap } from "rxjs";
 import { provideFormSuite, toDictionary } from "../../infrastructure";
 import { TodosFormSectionComponent } from "./todos-form-section.component";
 import { TodosClient } from "./todos.client";
-import { TodosFormModel } from "./todos.form-model";
+import { createEmptyFormModel } from "./todos.form-model";
 import { createTodosFormSuite } from "./create-todos-form.suite";
 import { merge } from "lodash";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "todos-form",
@@ -35,12 +37,13 @@ import { merge } from "lodash";
   `,
 })
 export class TodosForm implements OnInit, AfterViewInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly client = inject(TodosClient);
 
   @ViewChild(NgForm) protected ngForm?: NgForm;
 
-  protected formModel = this.createEmptyFormModel();
-  protected formSuite = createTodosFormSuite();
+  protected readonly formModel = createEmptyFormModel();
+  protected readonly formSuite = createTodosFormSuite();
 
   ngOnInit(): void {
     this.client
@@ -70,13 +73,8 @@ export class TodosForm implements OnInit, AfterViewInit {
       .pipe(
         distinctUntilChanged(),
         tap((valueChanged) => merge(this.formModel, valueChanged)),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
-  }
-
-  private createEmptyFormModel(): TodosFormModel {
-    return {
-      todos: {},
-    };
   }
 }

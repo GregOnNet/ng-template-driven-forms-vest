@@ -48,13 +48,8 @@ export class FormSuiteModelDirective implements Validator {
       return null;
     }
 
-    console.log("CREATE VAlidator for", fieldName);
-
     const validator = createValidator(fieldName, model, suite);
 
-    const result = validator.validate(control);
-    console.log("VALIDAtion Result", result);
-
-    return result;
+    return validator.validate(control);
   }
 }
