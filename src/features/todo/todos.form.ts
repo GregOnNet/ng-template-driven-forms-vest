@@ -8,12 +8,12 @@ import {
 } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { distinctUntilChanged, tap } from "rxjs";
-import { create, each, enforce, only, test } from "vest";
 import { provideFormSuite, toDictionary } from "../../infrastructure";
 import { TodosFormSectionComponent } from "./todos-form-section.component";
 import { TodosClient } from "./todos.client";
 import { TodosFormModel } from "./todos.form-model";
 import { createTodosFormSuite } from "./create-todos-form.suite";
+import { merge } from "lodash";
 
 @Component({
   selector: "todos-form",
@@ -67,11 +67,11 @@ export class TodosForm implements OnInit, AfterViewInit {
    */
   private updateFormModelOnFormValueChanges() {
     this.ngForm?.form.valueChanges
-      .pipe(distinctUntilChanged())
-      .subscribe((valueChanged) => {
-        console.log("VALUE CHANGED", valueChanged);
-        this.formModel = { ...this.formModel, ...valueChanged };
-      });
+      .pipe(
+        distinctUntilChanged(),
+        tap((valueChanged) => merge(this.formModel, valueChanged)),
+      )
+      .subscribe();
   }
 
   private createEmptyFormModel(): TodosFormModel {
